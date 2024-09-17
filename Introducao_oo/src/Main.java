@@ -42,8 +42,13 @@ public class Main {
          produtofisico1.setNome("Elden ring - Midia Fisica - PS4");
          produtofisico1.setPreco(200.0);
          produtofisico1.setDescricao(
-                 "Midia fisica do jogo Elden Ring PS4"
-         );
+                 "Midia fisica do jogo Elden Ring PS4");
+         produtofisico1.setPreco(200.0);
+         produtofisico1.setDimensao(new Dimensao(20, 20 , 20));
+         produtofisico1.getCaraceristicas().add(new caraceristicas("plataforma" , "PS4" ));
+         produtofisico1.getCaraceristicas().add(new caraceristicas("distribuidora " , "From - Software"));
+
+         System.out.println(produtofisico1);
 
 
         }
