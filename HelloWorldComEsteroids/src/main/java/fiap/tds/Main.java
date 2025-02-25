@@ -24,7 +24,8 @@ public class Main {
             System.out.println("3 - Remover coleção");
             System.out.println("4 - Listar todas as coleções (ADMIN APENAS)");
             System.out.println("5 - Exportar arquivo de coleções");
-            System.out.println("6 - Sair");
+            System.out.println("6 - Importar");
+            System.out.println("7 - Sair");
             var scan = new Scanner(System.in);
             var opcao = scan.nextInt();
             scan.nextLine();
@@ -42,9 +43,14 @@ public class Main {
                     ListarTodasColecoes(colecaoRepository);
                     break;
                 case 5:
-                    colecaoRepository.exportar();
+                    colecaoRepository.exportarArquivoGrande();
                     break;
                 case 6:
+                    System.out.println("Digite o nome do arquivo: ");
+                    var nomeDoArquivo = scan.nextLine();
+                    colecaoRepository.importar(nomeDoArquivo);
+                    break;
+                case 7:
                     break label;
                 default:
                     System.out.println("Opção inválida");

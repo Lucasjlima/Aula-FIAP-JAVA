@@ -2,8 +2,7 @@ package fiap.tds.repositories;
 
 import fiap.tds.entities.Colecao;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +79,44 @@ public class ColecaoRepository
         catch (Exception e){
             System.out.println("Erro ao exportar o arquivo");
             throw new RuntimeException(e);
+        }
+    }
+
+    public void importar(String c){
+        String caminho = "./reports/" + c;
+        try{
+            var file = new File(caminho);
+            var reader = new FileReader(file);
+            var conteudo = "";
+            while (reader.ready())
+                conteudo += (char) reader.read();
+            System.out.println(conteudo);
+        }
+        catch (IOException e){
+            System.out.println("Erro ao importar o arquivo");
+        }
+    }
+
+
+    public  void exportarArquivoGrande(){
+        var guid = UUID.randomUUID().toString();
+        var caminho = "./reports" + guid + "_colecoes.txt";
+        try{
+            var newFile = new File (caminho);
+            if(!newFile.exists()){
+                var writer = new BufferedWriter(new FileWriter(newFile));
+
+                var conteudoGrande = new StringBuilder();
+                for (int i = 0; i<10000000; i++)
+                    conteudoGrande.append("Linha" + i + "\n");
+                writer.write(conteudoGrande.toString());
+
+                writer.close();
+                System.out.println("Arquivo exportado com sucesso!");
+            }
+        }
+        catch (IOException e){
+            System.out.println("Erro ao exportar o arquivo");
         }
     }
 }
