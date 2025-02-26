@@ -43,7 +43,7 @@ public class Main {
                     ListarTodasColecoes(colecaoRepository);
                     break;
                 case 5:
-                    colecaoRepository.exportarArquivoGrande();
+                    colecaoRepository.exportarParaJson();
                     break;
                 case 6:
                     System.out.println("Digite o nome do arquivo: ");
@@ -100,4 +100,6 @@ public class Main {
         else
             System.out.println("Acesso não autorizado");
     }
+
+
 }

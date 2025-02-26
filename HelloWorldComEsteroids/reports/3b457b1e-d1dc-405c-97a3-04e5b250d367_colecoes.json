@@ -1,0 +1,26 @@
+[
+  {
+    "nome": "Primeira coleção",
+    "codigo": "1ED",
+    "dataLancamento": "2025-02-10",
+    "id": 0,
+    "deleted": false,
+    "dataCriacao": "2025-02-26T09:07:17.8000953"
+  },
+  {
+    "nome": "Segunda edição",
+    "codigo": "2ED",
+    "dataLancamento": "2025-02-10",
+    "id": 0,
+    "deleted": false,
+    "dataCriacao": "2025-02-26T09:07:17.8000953"
+  },
+  {
+    "nome": "Terceira edição",
+    "codigo": "3ED",
+    "dataLancamento": "2025-02-10",
+    "id": 0,
+    "deleted": false,
+    "dataCriacao": "2025-02-26T09:07:17.8000953"
+  }
+]

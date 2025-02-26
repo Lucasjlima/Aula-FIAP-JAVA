@@ -1,6 +1,12 @@
 package fiap.tds.repositories;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import fiap.tds.Main;
 import fiap.tds.entities.Colecao;
+import fiap.tds.extensions.LocalDateTimeGsonAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -8,9 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
 public class ColecaoRepository
         implements CrudRepository<Colecao> {
-    List<Colecao> colecoes = new ArrayList<>();
+
+    public static Logger logger = LogManager.getLogger(ColecaoRepository.class);
+
+    List<Colecao> colecoes = new ArrayList<>(List.of(
+            new Colecao("Primeira coleção", "1ED", "2025-02-10"),
+            new Colecao("Segunda edição", "2ED", "2025-02-10"),
+            new Colecao("Terceira edição", "3ED", "2025-02-10")
+    ));
 
     @Override
     public void adicionar(Colecao object) {
@@ -117,6 +131,46 @@ public class ColecaoRepository
         }
         catch (IOException e){
             System.out.println("Erro ao exportar o arquivo");
+        }
+    }
+
+    public void exportarParaJson(){
+        var guid = UUID.randomUUID().toString();
+        var caminho = "./reports/"+
+                guid
+                + "_colecoes.json";
+        try{
+            var gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeGsonAdapter())
+                    .setPrettyPrinting()
+                    .create();
+            var json = gson.toJson(colecoes);
+            var file = new File(caminho);
+            var fileWriter = new FileWriter(file);
+            fileWriter.write(json);
+            fileWriter.close();
+        }
+        catch (Exception e){
+            logger.error("Erro ao exportar o arquivo", e);
+            System.out.println("Erro ao exportar o arquivo");
+        }
+    }
+
+    public void importarParaJson(String arquivo){
+        try{
+            var gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeGsonAdapter())
+                    .create();
+            var caminho = "./reports" + arquivo;
+            var reader = new FileReader(caminho);
+            var colecoesDoJson = gson.fromJson(reader, Colecao[].class);
+            for(var c: colecoesDoJson)
+                adicionar(c);
+
+        }
+        catch(Exception e){
+            logger.error("Erro ao importar arquivo", e);
+            System.out.println("Erro ao importar o arquivo");
         }
     }
 }

@@ -13,5 +13,6 @@ import java.time.LocalDateTime;
 public abstract class _BaseEntity {
     private int id;
     private boolean deleted;
+    private LocalDateTime dataCriacao = LocalDateTime.now();
 
 }
