@@ -15,22 +15,22 @@ public class EventoRepository implements CrudRepository<Evento> {
 
     @Override
     public void update(int id, Evento object) {
-            for(Evento e: eventos)
-                if(e.getId() == id)
-                    e = object;
+        for(Evento e: eventos)
+            if(e.getId() == id)
+                e = object;
     }
 
     @Override
     public void delete(Evento object) {
-            eventos.remove(object);
+        eventos.remove(object);
     }
 
     @Override
     public void deleteById(int id) {
-            var set = eventos.stream()
-                    .filter(e -> e.getId() == id)
-                    .findFirst();
-            set.ifPresent(e -> e.setDeleted(true));
+        var set = eventos.stream()
+                .filter(e -> e.getId() == id)
+                .findFirst();
+        set.ifPresent(e -> e.setDeleted(true));
     }
 
     @Override

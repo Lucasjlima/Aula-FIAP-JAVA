@@ -9,4 +9,5 @@ public interface CrudRepository <T>{
     void deleteById(int id);
     List<T> listarTodos(); //Este listarTodos apenas serve para os ADMINs.
     List<T> listar();
+
 }

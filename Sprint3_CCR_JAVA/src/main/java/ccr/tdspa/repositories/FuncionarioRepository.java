@@ -1,13 +1,19 @@
 package ccr.tdspa.repositories;
 
 import ccr.tdspa.entities.Funcionario;
+import ccr.tdspa.entities.Seguranca;
+import ccr.tdspa.entities.TecnicoManutencao;
+import ccr.tdspa.enums.Cargo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FuncionarioRepository implements CrudRepository<Funcionario> {
 
-    List<Funcionario> funcionarios = new ArrayList<>();
+    List<Funcionario> funcionarios = new ArrayList<>(List.of(
+            new Seguranca(1,false,"Roberto", Cargo.SEGURANCA),
+            new TecnicoManutencao(2,false,"Carlos",Cargo.TECNICO_DE_MANUTENCAO)
+    ));
 
     @Override
     public void create(Funcionario object) {
