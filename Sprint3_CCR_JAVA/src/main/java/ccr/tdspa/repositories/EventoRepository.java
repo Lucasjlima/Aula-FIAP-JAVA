@@ -44,4 +44,6 @@ public class EventoRepository implements CrudRepository<Evento> {
                 .filter(e -> e.isDeleted())
                 .toList();
     }
+
+
 }
