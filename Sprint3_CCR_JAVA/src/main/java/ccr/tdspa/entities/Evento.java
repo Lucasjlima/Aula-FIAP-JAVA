@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 public class Evento{
     private int id;
     private boolean deleted;
+    private String descricao;
+
+
 
 
 }

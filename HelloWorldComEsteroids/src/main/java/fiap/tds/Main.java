@@ -34,7 +34,7 @@ public class Main {
                     CadastrarColecao(colecaoRepository);
                     break;
                 case 2:
-                    System.out.println(colecaoRepository.listar());
+                    System.out.println(colecaoRepository.listarTodos());
                     break;
                 case 3:
                     RemoverColecao(colecaoRepository);
