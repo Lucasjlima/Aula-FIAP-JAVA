@@ -17,6 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Funcionario {
+    private static final String SENHA_ADMIN = "CCR2025";
     private int id;
     private boolean deleted;
     private String nome;
@@ -55,29 +56,45 @@ public class Funcionario {
 
     public void relatoriosConcluidos() {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Digite o nome do arquivo: ");
-        try{
-            var nomeArquivo = sc.nextLine();
-            String caminho = "./reports/concluido/" + nomeArquivo;
-            var file = new File(caminho);
-            var reader = new BufferedReader(new FileReader(file));
-            var conteudo = "";
-            String linha;
-            while((linha = reader.readLine()) != null) {
-                conteudo += linha + "\n";
+        System.out.println("DIGITE A SENHA DE ADMIN PARA TER ACESSO: ");
+        var senha = sc.nextLine();
+        if (senha.equals(SENHA_ADMIN)) {
+            System.out.println("Digite o nome do arquivo: ");
+            try {
+                var nomeArquivo = sc.nextLine();
+                String caminho = "./reports/concluido/" + nomeArquivo;
+                var file = new File(caminho);
+                var reader = new BufferedReader(new FileReader(file));
+                var conteudo = "";
+                String linha;
+                while ((linha = reader.readLine()) != null) {
+                    conteudo += linha + "\n";
 
+                }
+                System.out.println(conteudo);
+                reader.close();
+            } catch (Exception e) {
+                System.out.println("Erro ao importar arquivo: " + e.getMessage());
             }
-            System.out.println(conteudo);
-            reader.close();
         }
-        catch (Exception e){
-            System.out.println("Erro ao importar arquivo: " + e.getMessage());
+        else{
+            System.out.println("Acesso negado!");
+            System.out.println("Encerrando programa...");
         }
     }
 
-    public void importarJsos(){
+    public void importarJsos() {
 
     }
+
+    public void menu(){
+        label:
+        while (true) {
+
+        }
+    }
+
+    public void montarListaFuncionarios() {}
 
 
 }

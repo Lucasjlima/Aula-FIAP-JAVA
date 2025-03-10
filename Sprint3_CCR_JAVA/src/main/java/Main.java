@@ -23,7 +23,7 @@ public class Main {
         funcionarioRepository.create(tecnico);
         eventoRepository.create(evento1);
 
-       // tecnico.resolverEvento(tecnico,evento1,eventoRepository);
+
 
         tecnico.relatoriosConcluidos();
 

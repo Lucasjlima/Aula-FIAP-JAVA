@@ -7,13 +7,11 @@ import ccr.tdspa.enums.Cargo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class FuncionarioRepository implements CrudRepository<Funcionario> {
 
-    List<Funcionario> funcionarios = new ArrayList<>(List.of(
-            new Seguranca(1,false,"Roberto", Cargo.SEGURANCA),
-            new TecnicoManutencao(2,false,"Carlos",Cargo.TECNICO_DE_MANUTENCAO)
-    ));
+    List<Funcionario> funcionarios = new ArrayList<>();
 
     @Override
     public void create(Funcionario object) {
@@ -50,5 +48,30 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
         return funcionarios.stream()
                 .filter(f -> f.isDeleted())
                 .toList();
+    }
+
+    public void montarListaFuncionarios() {
+        Scanner sc = new Scanner(System.in);
+        label:
+        while (true) {
+            System.out.println("Digite 1 para prosseguir/ 0 para sair: ");
+            var exit = sc.nextInt();
+            if(exit == 0){
+                break label;
+            } else if (exit == 1) {
+                System.out.println("Digite o id do funcionário");
+                var id = sc.nextInt();
+                sc.nextLine();
+                System.out.println("Digite o nome do funcionário");
+                var nome = sc.nextLine();
+                System.out.println("Digite o cargo do funcionário");
+                var cargo = sc.nextLine();
+                System.out.println("Digite true para instanciar o funcionário");
+                var ativo = sc.nextBoolean();
+                var funcionario = new Funcionario(id,ativo,nome,Cargo.valueOf(cargo));
+
+            }
+
+        }
     }
 }
