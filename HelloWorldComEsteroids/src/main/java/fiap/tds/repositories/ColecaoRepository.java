@@ -5,10 +5,12 @@ import com.google.gson.GsonBuilder;
 import fiap.tds.Main;
 import fiap.tds.entities.Colecao;
 import fiap.tds.extensions.LocalDateTimeGsonAdapter;
+import fiap.tds.infraestrutura.DatabaseConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +22,11 @@ public class ColecaoRepository
 
     public static Logger logger = LogManager.getLogger(ColecaoRepository.class);
 
-    List<Colecao> colecoes = new ArrayList<>(List.of(
-            new Colecao("Primeira coleção", "1ED", "2025-02-10"),
-            new Colecao("Segunda edição", "2ED", "2025-02-10"),
-            new Colecao("Terceira edição", "3ED", "2025-02-10")
-    ));
+    List<Colecao> colecoes = new ArrayList<>(//List.of(
+            //new Colecao("Primeira coleção", "1ED", "2025-02-10"),
+            //new Colecao("Segunda edição", "2ED", "2025-02-10"),
+            //new Colecao("Terceira edição", "3ED", "2025-02-10")
+    );//);
 
     @Override
     public void adicionar(Colecao object) {
@@ -33,7 +35,7 @@ public class ColecaoRepository
 
     @Override
     public void atualizar(int id, Colecao object) {
-        for (Colecao c: colecoes)
+        for (Colecao c : colecoes)
             if (c.getId() == id)
                 c = object;
     }
@@ -55,16 +57,35 @@ public class ColecaoRepository
 
     @Override
     public void deleteById(int id) {
-            var set = colecoes.stream()
-                    .filter(s -> s.getId() == id)
-                    .findFirst();
-            set.ifPresent(s -> s.setDeleted(true));
+        var set = colecoes.stream()
+                .filter(s -> s.getId() == id)
+                .findFirst();
+        set.ifPresent(s -> s.setDeleted(true));
 
     }
 
     @Override
     public List<Colecao> listarTodos() {
-        return colecoes;
+        var query = "SELECT * FROM colecao";
+        try {
+            var connection = DatabaseConfig.getConnection();
+            var statment = connection.prepareStatement(query);
+            var result = statment.executeQuery();
+            while(result.next())
+            {
+                var colecao = new Colecao();
+                colecao.setId(result.getInt("id"));
+                colecao.setDeleted(result.getBoolean("deleted"));
+                colecao.setCodigo(result.getString("codigo"));
+                colecao.setDataLancamento(result.getString("datadelancamento"));
+                colecoes.add(colecao);
+            }
+            connection.close();
+            return colecoes;
+        } catch (SQLException e) {
+                logger.error(e);
+        }
+        return null;
     }
 
     @Override
@@ -74,72 +95,69 @@ public class ColecaoRepository
                 .toList();
     }
 
-    public void exportar(){
+    public void exportar() {
         // fazer um teste de exportacao de uma string simples
         var guid = UUID.randomUUID().toString();
         var conteudo = "Esse texto será o conteudo que sera exportado para o meu arquivo";
-        var caminho = "./reports/"+
+        var caminho = "./reports/" +
                 guid
                 + "_colecoes.txt";
-        try{
+        try {
             var file = new File(caminho);
-            if(file.exists())
+            if (file.exists())
                 file.createNewFile();
             var writer = new FileWriter(file);
             writer.write(conteudo);
             writer.close();
             System.out.println("Arquivo exportado com sucesso");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Erro ao exportar o arquivo");
             throw new RuntimeException(e);
         }
     }
 
-    public void importar(String c){
+    public void importar(String c) {
         String caminho = "./reports/" + c;
-        try{
+        try {
             var file = new File(caminho);
             var reader = new FileReader(file);
             var conteudo = "";
             while (reader.ready())
                 conteudo += (char) reader.read();
             System.out.println(conteudo);
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Erro ao importar o arquivo");
         }
     }
 
 
-    public  void exportarArquivoGrande(){
+    public void exportarArquivoGrande() {
         var guid = UUID.randomUUID().toString();
         var caminho = "./reports" + guid + "_colecoes.txt";
-        try{
-            var newFile = new File (caminho);
-            if(!newFile.exists()){
+        try {
+            var newFile = new File(caminho);
+            if (!newFile.exists()) {
                 var writer = new BufferedWriter(new FileWriter(newFile));
 
                 var conteudoGrande = new StringBuilder();
-                for (int i = 0; i<10000000; i++)
+                for (int i = 0; i < 10000000; i++)
                     conteudoGrande.append("Linha" + i + "\n");
                 writer.write(conteudoGrande.toString());
 
                 writer.close();
                 System.out.println("Arquivo exportado com sucesso!");
             }
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Erro ao exportar o arquivo");
         }
     }
 
-    public void exportarParaJson(){
+    public void exportarParaJson() {
         var guid = UUID.randomUUID().toString();
-        var caminho = "./reports/"+
+        var caminho = "./reports/" +
                 guid
                 + "_colecoes.json";
-        try{
+        try {
             var gson = new GsonBuilder()
                     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeGsonAdapter())
                     .setPrettyPrinting()
@@ -149,26 +167,24 @@ public class ColecaoRepository
             var fileWriter = new FileWriter(file);
             fileWriter.write(json);
             fileWriter.close();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             logger.error("Erro ao exportar o arquivo", e);
             System.out.println("Erro ao exportar o arquivo");
         }
     }
 
-    public void importarParaJson(String arquivo){
-        try{
+    public void importarParaJson(String arquivo) {
+        try {
             var gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeGsonAdapter())
+                    .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeGsonAdapter())
                     .create();
             var caminho = "./reports" + arquivo;
             var reader = new FileReader(caminho);
             var colecoesDoJson = gson.fromJson(reader, Colecao[].class);
-            for(var c: colecoesDoJson)
+            for (var c : colecoesDoJson)
                 adicionar(c);
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             logger.error("Erro ao importar arquivo", e);
             System.out.println("Erro ao importar o arquivo");
         }
