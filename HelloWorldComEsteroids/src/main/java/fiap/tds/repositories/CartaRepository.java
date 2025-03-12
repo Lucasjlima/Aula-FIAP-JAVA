@@ -4,6 +4,7 @@ import fiap.tds.entities.Carta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CartaRepository implements CrudRepository<Carta> {
     private List<Carta> cartas = new ArrayList<>();
@@ -49,5 +50,10 @@ public class CartaRepository implements CrudRepository<Carta> {
     @Override
     public List<Carta> listar() {
         return cartas;
+    }
+
+    @Override
+    public Optional<Carta> buscarPorId(int id) {
+        return Optional.empty();
     }
 }
