@@ -1,11 +1,8 @@
 package fiap.tds.repositories;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import fiap.tds.Main;
 import fiap.tds.entities.Colecao;
 import fiap.tds.extensions.LocalDateTimeGsonAdapter;
-import fiap.tds.infrastructure.DatabaseConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
