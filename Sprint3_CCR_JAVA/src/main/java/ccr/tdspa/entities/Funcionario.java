@@ -83,9 +83,7 @@ public class Funcionario {
         }
     }
 
-    public void importarJsos() {
 
-    }
 
     public void menu(){
         label:
@@ -94,7 +92,7 @@ public class Funcionario {
         }
     }
 
-    public void montarListaFuncionarios() {}
+
 
 
 }

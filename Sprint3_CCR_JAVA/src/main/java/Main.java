@@ -21,7 +21,7 @@ public class Main {
         var tecnico = new TecnicoManutencao(3, false, "Roberto", Cargo.TECNICO_DE_MANUTENCAO);
 
         //funcionarioRepository.create(tecnico);
-        eventoRepository.create(evento1);
+        //eventoRepository.create(evento1);
 
         funcionarioRepository.montarListaFuncionarios(funcionarioRepository);
 
