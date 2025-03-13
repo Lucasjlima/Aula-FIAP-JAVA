@@ -20,12 +20,17 @@ public class Main {
         var evento1 = new Evento(1, false, DescricaoEvento.MANUTENCAO_ELETRICA);
         var tecnico = new TecnicoManutencao(3, false, "Roberto", Cargo.TECNICO_DE_MANUTENCAO);
 
-        funcionarioRepository.create(tecnico);
+        //funcionarioRepository.create(tecnico);
         eventoRepository.create(evento1);
 
+        funcionarioRepository.montarListaFuncionarios(funcionarioRepository);
+
+        //tecnico.relatoriosConcluidos();
 
 
-        tecnico.relatoriosConcluidos();
+
+
+
 
         logger.info("Sistema finalizando...");
     }

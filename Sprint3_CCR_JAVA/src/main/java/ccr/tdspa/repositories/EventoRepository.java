@@ -4,6 +4,7 @@ import ccr.tdspa.entities.Evento;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EventoRepository implements CrudRepository<Evento> {
 
@@ -43,6 +44,11 @@ public class EventoRepository implements CrudRepository<Evento> {
         return eventos.stream()
                 .filter(e -> e.isDeleted())
                 .toList();
+    }
+
+    @Override
+    public Optional<Evento> searchById(int id) {
+        return Optional.empty();
     }
 
 

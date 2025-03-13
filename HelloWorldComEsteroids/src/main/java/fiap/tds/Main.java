@@ -66,6 +66,7 @@ public class Main {
                         System.out.println(colecaoRepository.buscarPorId(id));
                         break;
                     case 8:
+                        System.out.println("Encerrando Sistema...");
                         break label;
                     default:
                         System.out.println("Opção inválida");

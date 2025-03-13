@@ -4,6 +4,7 @@ import ccr.tdspa.entities.TecnicoManutencao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TecnicoManutencaoRepository implements CrudRepository<TecnicoManutencao>{
 
@@ -39,6 +40,11 @@ public class TecnicoManutencaoRepository implements CrudRepository<TecnicoManute
         return manutencao.stream()
                 .filter(m -> m.isDeleted())
                 .toList();
+    }
+
+    @Override
+    public Optional<TecnicoManutencao> searchById(int id) {
+        return Optional.empty();
     }
 
     @Override
