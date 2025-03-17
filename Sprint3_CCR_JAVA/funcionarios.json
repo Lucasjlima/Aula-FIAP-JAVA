@@ -1,1 +1,16 @@
-[ ]
+[ {
+  "id" : 0,
+  "deleted" : false,
+  "nome" : "Luan",
+  "cargo" : "SEGURANCA"
+}, {
+  "id" : 0,
+  "deleted" : false,
+  "nome" : "Alvaro",
+  "cargo" : "SEGURANCA"
+}, {
+  "id" : 0,
+  "deleted" : false,
+  "nome" : "Mark",
+  "cargo" : "TECNICO_DE_MANUTENCAO"
+} ]
