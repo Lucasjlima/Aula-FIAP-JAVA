@@ -13,4 +13,14 @@
   "deleted" : false,
   "nome" : "Mark",
   "cargo" : "TECNICO_DE_MANUTENCAO"
+}, {
+  "id" : 0,
+  "deleted" : false,
+  "nome" : "Joao",
+  "cargo" : "SEGURANCA"
+}, {
+  "id" : 0,
+  "deleted" : false,
+  "nome" : "Kaue",
+  "cargo" : "SEGURANCA"
 } ]
