@@ -22,7 +22,8 @@ public class Main {
 
         //funcionarioRepository.create(tecnico);
         //eventoRepository.create(evento1);
-        funcionarioRepository.montarListaFuncionarios(funcionarioRepository);
+        //funcionarioRepository.montarListaFuncionarios(funcionarioRepository);
+        funcionarioRepository.menu(funcionarioRepository);
 
 
 

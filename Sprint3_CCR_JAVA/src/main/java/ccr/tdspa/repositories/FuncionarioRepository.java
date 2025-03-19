@@ -46,32 +46,56 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
 
     @Override
     public void delete(Funcionario object) {
-        funcionarios.remove(object);
+        object.setDeleted(true);
     }
 
     @Override
     public void deleteById(int id) {
-        var query = "UPDATE COLECAO SET DELETED = 1 WHERE ID = ?";
-        try(var conn = DataBaseConfig.getConnection())
-        {
+        var query = "DELETE FROM FUNCIONARIO WHERE ID = ?";
+        try (var conn = DataBaseConfig.getConnection()) {
             var stmt = conn.prepareStatement(query);
-            stmt.setInt(1,id);
+            stmt.setInt(1, id);
             var result = stmt.executeUpdate();
-            if(result > 0){
-                logger.info("Funcionário removido com sucesso!");
-            }
 
-        }
-        catch (SQLException e)
-        {
-            System.out.println("Erro ao deletar Funcionário");
-            logger.error(e.getMessage());
+            if (result > 0) {
+                logger.info("Funcionário removido com sucesso!");
+
+            } else {
+                System.out.println("Nenhum funcionário encontrado com esse ID.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao deletar Funcionário: " + e.getMessage());
+            logger.error("Erro ao deletar Funcionário", e);
         }
     }
 
+
     @Override
     public List<Funcionario> listarTodos() {
-        return funcionarios;
+        var funcionariosDb = new ArrayList<Funcionario>();
+        var query = "SELECT * FROM FUNCIONARIO";
+        try(var connection = DataBaseConfig.getConnection())
+        {
+            var stmt = connection.prepareStatement(query);
+            var result = stmt.executeQuery();
+            while(result.next())
+            {
+                var funcionario = new Funcionario();
+                funcionario.setId(result.getInt("id"));
+                funcionario.setDeleted(result.getBoolean("deleted"));
+                funcionario.setNome(result.getString("nome"));
+                String cargoStr = result.getString("cargo");
+                Cargo cargo = Cargo.valueOf(cargoStr.toUpperCase());
+                funcionario.setCargo(cargo);
+                funcionariosDb.add(funcionario);
+            }
+            return funcionariosDb;
+        }
+        catch (SQLException e)
+        {
+            logger.error(e.getMessage());
+        }
+        return null;
     }
 
     @Override
@@ -86,16 +110,26 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
         return Optional.empty();
     }
 
+    public void removerFuncionario(FuncionarioRepository funcionarioRepository) {
+        System.out.println("Digite o id do Funcionário que deseja deletar: ");
+        var sc = new Scanner(System.in);
+        var id = sc.nextInt();
+        sc.nextLine();
+        System.out.println("Deletando usuário com id... " + id);
+        funcionarioRepository.deleteById(id);
+    }
+
     public List<Funcionario> carregarFuncionariosDoJson() {
         ObjectMapper objectMapper = new ObjectMapper();
         File file = new File("funcionarios.json");
 
-         if (!file.exists() || file.length() == 0) {
+        if (!file.exists() || file.length() == 0) {
             return new ArrayList<>();
         }
 
         try {
-            return objectMapper.readValue(file, new TypeReference<List<Funcionario>>() {});
+            return objectMapper.readValue(file, new TypeReference<List<Funcionario>>() {
+            });
         } catch (Exception e) {
             System.out.println("Erro ao carregar funcionários do JSON!");
             logger.error(e.getMessage());
@@ -121,7 +155,6 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
             logger.error(e.getMessage());
         }
     }
-
 
 
     public void montarListaFuncionarios(FuncionarioRepository funcionarioRepository) {
@@ -169,6 +202,34 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
         }
 
         System.out.println("Funcionário criado com sucesso!");
+    }
+
+    public void menu(FuncionarioRepository funcionarioRepository) {
+
+        label:
+        while (true) {
+            System.out.println("####################");
+            System.out.println("Olá, Digite a opção que deseja executar: ");
+            System.out.println("####################");
+            System.out.println("1 - Excluir Funcionário");
+            System.out.println("2 - Sair");
+
+            var sc = new Scanner(System.in);
+            var opcao = sc.nextInt();
+            sc.nextLine();
+
+            switch (opcao) {
+                case 1:
+                    removerFuncionario(funcionarioRepository);
+                    System.out.println("Funcionário removido com sucesso!");
+                    break;
+                case 2:
+                    System.out.println("Encerrando o Sistema...");
+                    break label;
+
+
+            }
+        }
     }
 
 }
