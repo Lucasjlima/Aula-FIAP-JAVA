@@ -1,4 +1,4 @@
-package infrastructure;
+package ccr.tdspa.infrastructure;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

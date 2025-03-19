@@ -1,22 +1,22 @@
 package ccr.tdspa.repositories;
 
 import ccr.tdspa.entities.Funcionario;
-import ccr.tdspa.entities.Seguranca;
-import ccr.tdspa.entities.TecnicoManutencao;
 import ccr.tdspa.enums.Cargo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import infrastructure.DataBaseConfig;
+import ccr.tdspa.infrastructure.DataBaseConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Random;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.*;
 
 public class FuncionarioRepository implements CrudRepository<Funcionario> {
     public static Logger logger = LogManager.getLogger(FuncionarioRepository.class);
+    private static final String SENHA_ADMIN = "CCR2025";
 
     List<Funcionario> funcionarios = new ArrayList<>();
 
@@ -39,9 +39,24 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
 
     @Override
     public void update(int id, Funcionario object) {
-        for (Funcionario f : funcionarios)
-            if (f.getId() == id)
-                f = object;
+        var query = "UPDATE FUNCIONARIO SET NOME = ?, CARGO = ? WHERE ID = ?";
+
+        try (var conn = DataBaseConfig.getConnection()) {
+            var stmt = conn.prepareStatement(query);
+            stmt.setString(1, object.getNome());
+            stmt.setString(2, object.getCargo().name());
+            stmt.setInt(3, id);
+            var result = stmt.executeUpdate();
+
+            if (result > 0)
+                logger.info("Funcionário atualizado com sucesso!");
+            else
+                logger.warn("Nenhum funcionário encontrado com este ID: " + id);
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar o funcionário!");
+            logger.error(e.getMessage());
+        }
+
     }
 
     @Override
@@ -74,12 +89,10 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
     public List<Funcionario> listarTodos() {
         var funcionariosDb = new ArrayList<Funcionario>();
         var query = "SELECT * FROM FUNCIONARIO";
-        try(var connection = DataBaseConfig.getConnection())
-        {
+        try (var connection = DataBaseConfig.getConnection()) {
             var stmt = connection.prepareStatement(query);
             var result = stmt.executeQuery();
-            while(result.next())
-            {
+            while (result.next()) {
                 var funcionario = new Funcionario();
                 funcionario.setId(result.getInt("id"));
                 funcionario.setDeleted(result.getBoolean("deleted"));
@@ -90,12 +103,10 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
                 funcionariosDb.add(funcionario);
             }
             return funcionariosDb;
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             logger.error(e.getMessage());
         }
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
@@ -107,9 +118,51 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
 
     @Override
     public Optional<Funcionario> searchById(int id) {
+        var query = "SELECT * FROM FUNCIONARIO WHERE ID = ?";
+        try (var connection = DataBaseConfig.getConnection()) {
+            var stmt = connection.prepareStatement(query);
+            stmt.setInt(1, id);
+            var result = stmt.executeQuery();
+            if (result.next()) {
+                var funcionario = new Funcionario();
+                funcionario.setId(result.getInt("id"));
+                funcionario.setDeleted(result.getBoolean("deleted"));
+                funcionario.setNome(result.getString("nome"));
+                String cargoStr = result.getString("cargo");
+                Cargo cargo = Cargo.valueOf(cargoStr.toUpperCase());
+                funcionario.setCargo(cargo);
+                return Optional.of(funcionario);
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
         return Optional.empty();
     }
 
+    //Função que cria um funcionário//Usada no menu
+    public void criarFuncionario(FuncionarioRepository funcionarioRepository) {
+        try {
+            var sc = new Scanner(System.in);
+
+            var id = 0;
+
+            System.out.println("Digite o nome do Funcionário: ");
+            var nome = sc.nextLine();
+
+            System.out.println("Digite o Cargo do Funcionário");
+            var cargoStr = sc.nextLine().toUpperCase();
+            Cargo cargo = Cargo.valueOf(cargoStr);
+
+            var funcionario = new Funcionario(id, false, nome, cargo);
+            funcionarioRepository.create(funcionario);
+            logger.info("Funcionário {},Criado com sucesso!", nome);
+        } catch (Exception e) {
+            System.out.println("Não foi possível criar o Funcionário");
+            logger.error(e.getMessage());
+        }
+    }
+
+    //Função que remove funcionário/Usado no menu
     public void removerFuncionario(FuncionarioRepository funcionarioRepository) {
         System.out.println("Digite o id do Funcionário que deseja deletar: ");
         var sc = new Scanner(System.in);
@@ -119,6 +172,54 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
         funcionarioRepository.deleteById(id);
     }
 
+    //Função que lista funcionários/Usada no menu
+    public void listarFuncionarios(FuncionarioRepository funcionarioRepository) {
+        var sc = new Scanner(System.in);
+        System.out.println("Insira a senha ADMIN: ");
+        var senha = sc.nextLine();
+        if (senha.equals(SENHA_ADMIN))
+            System.out.println(funcionarioRepository.listarTodos());
+        else
+            System.out.println("Acesso negado!");
+    }
+
+    //Função que atualiza funcionário/Usada no menu
+    public void atualizarFuncionario(FuncionarioRepository funcionarioRepository) {
+        var sc = new Scanner(System.in);
+
+        System.out.println("Insira o ID do Funcionário que deseja atualizar: ");
+        var id = sc.nextInt();
+        sc.nextLine();
+
+        Optional<Funcionario> funcionarioOpt = funcionarioRepository.searchById(id);
+        if (funcionarioOpt.isPresent()) {
+            Funcionario funcionario = funcionarioOpt.get();
+            System.out.println("Nome atual: " + funcionario.getNome());
+            System.out.println("Digite o novo nome (Ou pressione Enter para manter):");
+            var novoNome = sc.nextLine();
+            if (!novoNome.trim().isEmpty()) {
+                funcionario.setNome(novoNome);
+            }
+
+            System.out.println("Cargo atual: " + funcionario.getCargo());
+            System.out.println("Digite o novo cargo (Ou pressione Enter para manter):");
+            var novoCargoStr = sc.nextLine().toUpperCase();
+            if (!novoCargoStr.trim().isEmpty()) {
+                try {
+                    Cargo novoCargo = Cargo.valueOf(novoCargoStr);
+                    funcionario.setCargo(novoCargo);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Cargo inválido! Mantendo o cargo anterior.");
+                }
+            }
+            funcionarioRepository.update(id, funcionario);
+        } else
+            System.out.println("Funcionário não encontrado.");
+
+
+    }
+
+    //Verifica a existencia da lista
     public List<Funcionario> carregarFuncionariosDoJson() {
         ObjectMapper objectMapper = new ObjectMapper();
         File file = new File("funcionarios.json");
@@ -131,13 +232,12 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
             return objectMapper.readValue(file, new TypeReference<List<Funcionario>>() {
             });
         } catch (Exception e) {
-            System.out.println("Erro ao carregar funcionários do JSON!");
             logger.error(e.getMessage());
             return new ArrayList<>();
         }
     }
 
-
+    //Registra o funcionario em json
     public void registrarFuncJson(Funcionario novoFuncionario) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -156,7 +256,7 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
         }
     }
 
-
+    //Função que cria um funcionário e exporta lista json
     public void montarListaFuncionarios(FuncionarioRepository funcionarioRepository) {
         Scanner sc = new Scanner(System.in);
 
@@ -165,43 +265,38 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
 
         label:
         while (true) {
+            Random random = new Random();
             System.out.println("Digite 1 para prosseguir/ 0 para sair: ");
             var exit = sc.nextInt();
 
             switch (exit) {
                 case 0:
-                    break label;  // Sai do loop
+                    break label;
 
                 case 1:
-                    var id = 0;  // Defina o ID conforme necessário
-                    sc.nextLine();  // Limpar o buffer do Scanner
+                    var id = random.nextInt(100);
+                    sc.nextLine();
 
                     System.out.println("Digite o nome do funcionário");
                     var nome = sc.nextLine();
 
-                    System.out.println("Digite o cargo do funcionário");
+                    System.out.println("Digite o cargo do funcionário -- (SEGURANCA) ou (TECNICODEMANUTENCAO)");
                     String cargoStr = sc.nextLine().toUpperCase();
                     Cargo cargo = Cargo.valueOf(cargoStr);
 
-                    // Criar o novo funcionário
+
                     var funcionario = new Funcionario(id, false, nome, cargo);
 
-                    // Adicionar à lista carregada do JSON
+
                     listaFuncionarios.add(funcionario);
 
-                    // Inserir no banco de dados
-                    funcionarioRepository.create(funcionario);
-
-                    // Salvar todos os funcionários no arquivo JSON
                     funcionarioRepository.registrarFuncJson(funcionario);
 
-                    // Mostrar os funcionários carregados (opcional, só para ver o que está sendo salvo)
-                    System.out.println(listaFuncionarios);
+
                     break;
             }
         }
 
-        System.out.println("Funcionário criado com sucesso!");
     }
 
     public void menu(FuncionarioRepository funcionarioRepository) {
@@ -211,8 +306,13 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
             System.out.println("####################");
             System.out.println("Olá, Digite a opção que deseja executar: ");
             System.out.println("####################");
-            System.out.println("1 - Excluir Funcionário");
-            System.out.println("2 - Sair");
+            System.out.println("1 - Criar Funcionário");
+            System.out.println("2 - Excluir Funcionário");
+            System.out.println("3 - Listar Funcionários -- (Admin/Acesso exclusivo)");
+            System.out.println("4 - Buscar Funcionário por ID");
+            System.out.println("5 - Atualizar Funcionário");
+            System.out.println("6 - Montar lista (Json) de Funcionários");
+            System.out.println("7 - Sair");
 
             var sc = new Scanner(System.in);
             var opcao = sc.nextInt();
@@ -220,11 +320,36 @@ public class FuncionarioRepository implements CrudRepository<Funcionario> {
 
             switch (opcao) {
                 case 1:
+                    criarFuncionario(funcionarioRepository);
+                    System.out.println("Funcionário criado com sucesso!");
+                    break;
+
+                case 2:
                     removerFuncionario(funcionarioRepository);
                     System.out.println("Funcionário removido com sucesso!");
                     break;
-                case 2:
+                case 3:
+                    listarFuncionarios(funcionarioRepository);
+                    break;
+                case 4:
+                    System.out.println("Digite o ID do Funcionário");
+                    var id = sc.nextInt();
+                    sc.nextLine();
+                    System.out.println(funcionarioRepository.searchById(id));
+                    break;
+                case 5:
+                    atualizarFuncionario(funcionarioRepository);
+                    System.out.println("Funcionário atualizado com sucesso!");
+                    break;
+
+                case 6:
+                    montarListaFuncionarios(funcionarioRepository);
+                    break;
+
+                case 7:
+                    System.out.println("####################");
                     System.out.println("Encerrando o Sistema...");
+                    System.out.println("####################");
                     break label;
 
 

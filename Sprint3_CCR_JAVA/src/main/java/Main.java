@@ -1,8 +1,10 @@
 import ccr.tdspa.entities.Evento;
+import ccr.tdspa.entities.Funcionario;
 import ccr.tdspa.entities.Seguranca;
 import ccr.tdspa.entities.TecnicoManutencao;
 import ccr.tdspa.enums.Cargo;
 import ccr.tdspa.enums.DescricaoEvento;
+import ccr.tdspa.infrastructure.AplicationTestConfig;
 import ccr.tdspa.repositories.EventoRepository;
 import ccr.tdspa.repositories.FuncionarioRepository;
 import org.apache.logging.log4j.LogManager;
@@ -13,17 +15,13 @@ public class Main {
 
     public static void main(String[] args) {
         logger.info("Sistema iniciando...");
+        AplicationTestConfig.testAplication(args);
 
         var funcionarioRepository = new FuncionarioRepository();
-        var eventoRepository = new EventoRepository();
-
-        var evento1 = new Evento(1, false, DescricaoEvento.MANUTENCAO_ELETRICA);
-        var tecnico = new TecnicoManutencao(3, false, "Roberto", Cargo.TECNICO_DE_MANUTENCAO);
-
-        //funcionarioRepository.create(tecnico);
-        //eventoRepository.create(evento1);
-        //funcionarioRepository.montarListaFuncionarios(funcionarioRepository);
-        funcionarioRepository.menu(funcionarioRepository);
+        var funcionario = new Funcionario(1,false,"Adryan",Cargo.TECNICODEMANUTENCAO);
+        var evento = new Evento(1,false,DescricaoEvento.MANUTENCAO_ELETRICA);
+        //funcionarioRepository.menu(funcionarioRepository);
+        funcionario.menuFunc(funcionario,evento);
 
 
 

@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -24,35 +26,48 @@ public class Funcionario {
     private Cargo cargo;
 
 
-    public void resolverEvento(Funcionario funcionario, Evento evento, EventoRepository eventoRepository) {
-        if (evento.isDeleted() == true) {
-            System.out.println("Este evento ja foi concluido ou está sobre dominio de outro funcionario");
+    public void resolverEvento(Funcionario funcionario, Evento evento) {
+        if (evento.isDeleted()) {
+            System.out.println("Este evento já foi concluído ou está sob domínio de outro funcionário");
             return;
         }
+
         Scanner sc = new Scanner(System.in);
-        System.out.println("Funcionario: " + funcionario.getNome() + ",id: " + funcionario.getId() + "\n" +
-                "Informações do reporte recebido : " + evento.getDescricao());
+        System.out.println("Funcionário: " + funcionario.getNome() + ", ID: " + funcionario.getId() + "\n" +
+                "Informações do reporte recebido: " + evento.getDescricao());
+
         System.out.println("Informe a situação do reporte: ");
         var guid = UUID.randomUUID().toString();
         var informacao = sc.nextLine();
+
+
+        LocalDateTime dataHoraAtual = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String dataFormatada = dataHoraAtual.format(formatter);
+
         var caminho = "./reports/concluido/" + guid + "_eventos.txt";
+
         try {
             var file = new File(caminho);
             if (!file.exists()) {
                 file.createNewFile();
                 var writer = new FileWriter(file);
-                writer.write("Id do evento: " + evento.getId() + "\n" + "Funcionário responsável: " +
-                        funcionario.getNome() + "\n" + "Situacao Do Reporte:" + informacao);
+
+
+                writer.write("Id do evento: " + evento.getId() + "\n" +
+                        "Funcionário responsável: " + funcionario.getNome() + "\n" +
+                        "Situação do reporte: " + informacao + "\n" +
+                        "Data e Hora da Conclusão:: " + dataFormatada);
+
                 writer.close();
-                System.out.println("Reporte concluido com sucesso!");
+                System.out.println("Reporte concluído com sucesso!");
             }
-            eventoRepository.deleteById(evento.getId());
         } catch (Exception e) {
             System.out.println("Erro ao exportar reporte: " + e.getMessage());
             throw new RuntimeException(e);
         }
-
     }
+
 
     public void relatoriosConcluidos() {
         Scanner sc = new Scanner(System.in);
@@ -76,23 +91,38 @@ public class Funcionario {
             } catch (Exception e) {
                 System.out.println("Erro ao importar arquivo: " + e.getMessage());
             }
-        }
-        else{
+        } else {
             System.out.println("Acesso negado!");
             System.out.println("Encerrando programa...");
         }
     }
 
-
-
-    public void menu(){
+    public void menuFunc(Funcionario funcionario, Evento evento) {
+        var sc = new Scanner(System.in);
         label:
         while (true) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println("Digite a opção desejada: ");
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println("1 - Resolver Evento");
+            System.out.println("2 - Importar relatórios concluídos");
+            System.out.println("3 - Sair do sistema");
+
+            var opcao = sc.nextInt();
+            switch (opcao) {
+                case 1:
+                    resolverEvento(funcionario, evento);
+                    break;
+                case 2:
+                    relatoriosConcluidos();
+                    break;
+                case 3:
+                    System.out.println("Sistema finalizando...");
+                    break label;
+            }
+
 
         }
     }
-
-
-
 
 }

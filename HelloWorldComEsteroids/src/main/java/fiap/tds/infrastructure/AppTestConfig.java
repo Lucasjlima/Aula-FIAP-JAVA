@@ -43,7 +43,7 @@ package fiap.tds.infrastructure;
 
                 if (!testMemoryAvailability()) {
                     logger.warn("Memória disponível abaixo do recomendado");
-                    // Not failing the tests, just warning
+
                 }
 
                 if (allTestsPassed) {
