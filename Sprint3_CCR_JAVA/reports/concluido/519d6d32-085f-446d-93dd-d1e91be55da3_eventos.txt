@@ -1,0 +1,4 @@
+Id do evento: 1
+Funcionário responsável: Adryan
+Situação do reporte: Me desloquei até o ponto do evento e realizei a troca do fusível.
+Data e Hora da Conclusão:: 20/03/2025 18:24:25

@@ -3,6 +3,7 @@ package ccr.tdspa.infrastructure;
 
 import ccr.tdspa.entities.Evento;
 import ccr.tdspa.entities.Funcionario;
+import ccr.tdspa.repositories.FuncionarioRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -87,13 +88,13 @@ public class AplicationTestConfig {
 
     private static boolean checkImportantFunctions() {
         try {
-            Method method = Funcionario.class.getMethod("menuFunc", Funcionario.class, Evento.class);
+            Method method = FuncionarioRepository.class.getMethod("menu", FuncionarioRepository.class);
             if (method != null) {
                 logger.info("Função importante 'menuFunc' está disponível.");
                 return true;
             }
         } catch (NoSuchMethodException e) {
-            logger.error("Função importante 'menuFunc' não encontrada: " + e.getMessage());
+            logger.error("Função importante 'menu' não encontrada: " + e.getMessage());
         }
         return false;
     }

@@ -20,7 +20,8 @@ public class Main {
         var funcionarioRepository = new FuncionarioRepository();
         var funcionario = new Funcionario(1,false,"Adryan",Cargo.TECNICODEMANUTENCAO);
         var evento = new Evento(1,false,DescricaoEvento.MANUTENCAO_ELETRICA);
-        //funcionarioRepository.menu(funcionarioRepository);
+        funcionarioRepository.menu(funcionarioRepository);
+
         funcionario.menuFunc(funcionario,evento);
 
 

@@ -8,4 +8,14 @@
   "deleted" : false,
   "nome" : "Kevin",
   "cargo" : "SEGURANCA"
+}, {
+  "id" : 6,
+  "deleted" : false,
+  "nome" : "Ana",
+  "cargo" : "SEGURANCA"
+}, {
+  "id" : 24,
+  "deleted" : false,
+  "nome" : "Claudio",
+  "cargo" : "SEGURANCA"
 } ]
