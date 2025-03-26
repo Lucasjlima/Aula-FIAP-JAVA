@@ -1,9 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="AulaQuarkusApi" type="QuarkusMavenBridge">
-    <option name="jreName" value="openjdk-24" />
-    <option name="profiles" />
-    <option name="vmOptions" />
-    <option name="workingDir" value="C:\Users\labsfiap\Documents\GitHub\Aula-FIAP-JAVA\code-with-quarkus" />
-    <method v="2" />
-  </configuration>
-</component>
