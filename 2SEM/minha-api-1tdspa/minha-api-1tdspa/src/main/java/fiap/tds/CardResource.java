@@ -5,6 +5,7 @@ import fiap.tds.entities.Card;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.Getter;
 import org.jboss.resteasy.reactive.RestResponse;
 
 import java.util.ArrayList;
@@ -61,6 +62,21 @@ public class CardResource {
                 PAGE_SIZE,
                 filteredCards.size(),
                 filteredCards.subList(start,end));
+    }
+
+    @GET
+    @Path("/random")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRandomCard(){
+        var randomCard = cards.get((int) (Math.random() * cards.size()));
+        return Response.ok(randomCard).build();
+    }
+
+    @GET
+    @Path("collection/{collection}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCardByCollection(@PathParam("collection") String collection){
+        return Response.status(501).build(); //Not implemented yet
     }
 
     @GET
