@@ -2,9 +2,12 @@ package fiap.tds;
 
 import fiap.tds.dtos.SearchCardDto;
 import fiap.tds.entities.Card;
+import io.smallrye.faulttolerance.api.RateLimit;
+import io.smallrye.faulttolerance.api.RateLimitType;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.jboss.resteasy.reactive.RestResponse;
 
 import java.util.ArrayList;
@@ -26,8 +29,16 @@ public class CardResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Card> getCards() {
-        return cards;
+    @RateLimit(value = 5, window = 1000, type = RateLimitType.FIXED)
+    @Fallback(fallbackMethod = "faultToleranceFallback")
+    public Response getCards() throws InterruptedException {
+        return Response.ok(cards).build();
+    }
+
+    public Response faultToleranceFallback(){
+        return Response.status(Response.Status.TOO_MANY_REQUESTS)
+                .entity("You're excited the rate limit of this endpoint")
+                .build();
     }
 
     @GET
