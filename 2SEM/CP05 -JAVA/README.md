@@ -1,4 +1,11 @@
-# CP 04 API MTG
+# CP 05 API MTG
+
+## Informações do Aluno
+
+- **Nome:** Lucas José Lima  
+- **RM:** 561160  
+- **Curso:** Análise e Desenvolvimento de Sistemas  
+- **Turma:** 1TDSPA
 
 
 <!--Primeira parte: Introduzir o que é -->
@@ -53,7 +60,7 @@ Representa um deck de cartas de Magic: The Gathering.
 - `formato` (string, obrigatório): Formato do deck (ex: "Commander", "Standard", "Modern").
 - `cartas` (array de CartaDTO, opcional): Lista de cartas que compõem o deck.
 - `usuarioId` (integer, obrigatório): ID do usuário dono do deck.
-- `dataCriacao` (string, obrigatório): Data de criação do deck no formato ISO 8601.
+- `dataCriacao` (string, obrigatório): Data de criação do deck no formato ISO 8601.    
 
 **Exemplo de JSON:**
 ```json
@@ -96,8 +103,8 @@ Representa uma carta de Magic: The Gathering.
 - `descricao` (string, opcional): Descrição opcional explicando a carta.
 - `tipo` (string, obrigatório): Tipo da carta (ex: "vanguard", "tribal", "Enchantment").
 - `cor` (string, obrigatório): Cor da carta (ex: "Red", "Blue", "Green").
-- `custoMana` (integer, obrigatório): Custo de mana da carta (ex: "2R", "3GG").
-- `quantidade` (integer, obrigatório): Quantidade dessa carta no deck.
+- `custoMana` (string, obrigatório): Custo de mana da carta (ex: "2R", "3GG").
+- `quantidade` (integer, obrigatório): Quantidade de cartas dentro do deck.
 
 **Exemplo de JSON:**
 ```json
@@ -107,7 +114,7 @@ Representa uma carta de Magic: The Gathering.
   "tipo": "Creature",
   "cor": "Gold",
   "custoMana": "3GG",
-  "quantidade": 4,
+  "quantidade": "2",
   "descricao": "Causa 3 pontos de dano a qualquer alvo."
 }
 ```
@@ -120,7 +127,7 @@ Representa os dados de um usuário do sistema.
 - `id` (integer, obrigatório): Identificador único do usuário.
 - `nome` (string, obrigatório): Nome completo do usuário.
 - `email` (string, obrigatório): E-mail do usuário.
-- `senha` (integer, obrigatório): Senha de acesso (armazenada de forma segura).
+- `senha` (string, obrigatório): Senha de acesso (armazenada de forma segura).
 - `dataCriacao` (string, opcional): Data de criação da conta (formato ISO 8601).
 
 **Exemplo de JSON:**
@@ -133,7 +140,6 @@ Representa os dados de um usuário do sistema.
   "dataCriacao": "2025-04-28T14:30:00Z"
 }
 ```
-
 
 
 
