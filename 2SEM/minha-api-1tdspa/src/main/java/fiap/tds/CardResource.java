@@ -1,24 +1,27 @@
 package fiap.tds;
 
-import fiap.tds.dtos.SearchCardDto;
-import fiap.tds.entities.Card;
+
 import io.smallrye.faulttolerance.api.RateLimit;
-import io.smallrye.faulttolerance.api.RateLimitType;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.faulttolerance.Fallback;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.jboss.resteasy.reactive.RestResponse;
 
+import javax.smartcardio.Card;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Path("/card")
 public class CardResource {
 
     public static final int PAGE_SIZE = 3;
-
+    //private final CardService cardService = new CardService();
+    private final
     static List<Card> cards = new ArrayList<Card>(List.of(
             new Card(1, "Card 1", "Description 1"),
             new Card(2, "Card 2", "Description 2"),
@@ -29,7 +32,8 @@ public class CardResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @RateLimit(value = 5, window = 1000, type = RateLimitType.FIXED)
+    @RateLimit
+    @Timeout
     @Fallback(fallbackMethod = "faultToleranceFallback")
     public Response getCards() throws InterruptedException {
         return Response.ok(cards).build();
@@ -37,7 +41,7 @@ public class CardResource {
 
     public Response faultToleranceFallback(){
         return Response.status(Response.Status.TOO_MANY_REQUESTS)
-                .entity("You're excited the rate limit of this endpoint")
+                .entity("You're exceed the rate limit of this endpoint")
                 .build();
     }
 
@@ -75,6 +79,21 @@ public class CardResource {
     }
 
     @GET
+    @Path("/random")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRandomCard(){
+        var randomCard = cards.get((int) (Math.random() * cards.size()));
+        return Response.ok(randomCard).build();
+    }
+
+    @GET
+    @Path("/collection/{collection}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCardByCollection(@PathParam("collection") String collection){
+        return Response.status(501).build(); // Not implemented yet
+    }
+
+    @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCard(@PathParam("id") int id){
@@ -88,6 +107,10 @@ public class CardResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addCard(Card card){
+
+        if(!cardService.validateCard(card))
+            return Response.status(Response.Status.BAD_REQUEST).build();
+
         cards.add(card);
         return Response.status(Response.Status.CREATED)
                 .entity(card)

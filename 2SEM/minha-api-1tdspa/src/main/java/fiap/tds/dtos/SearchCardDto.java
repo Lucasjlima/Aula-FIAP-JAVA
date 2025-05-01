@@ -1,7 +1,8 @@
 package fiap.tds.dtos;
 
-import fiap.tds.entities.Card;
 
+
+import javax.smartcardio.Card;
 import java.util.List;
 
 public record SearchCardDto(int page, String direction, int pageSize,

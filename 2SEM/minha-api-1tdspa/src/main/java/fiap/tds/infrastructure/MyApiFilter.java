@@ -22,13 +22,13 @@ public class MyApiFilter implements ContainerRequestFilter {
     String apiKeyMobile;
 
     @Override
-    public void filter(ContainerRequestContext resquestContext) throws IOException {
-        var apiRequestKey = resquestContext.getHeaderString("X-API-Key");
+    public void filter(ContainerRequestContext requestContext) throws IOException {
+        var apiRequestKey = requestContext.getHeaderString("X-API-Key");
         var apiKeys = new String[]{apiKey, apiKeyMobile};
 
         if (apiRequestKey == null
                 || Arrays.stream(apiKeys).noneMatch(ak -> ak.equals(apiRequestKey))) {
-            resquestContext.abortWith(
+            requestContext.abortWith(
                     Response.status(Response.Status.UNAUTHORIZED)
                             .entity("API Key is missing or invalid")
                             .build()
