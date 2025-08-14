@@ -18,7 +18,12 @@ public class ProjetctRepository {
     }
 
     public Project save (Project project) {
-        database.put(project.getId(), project);
+        database.put(project.id(), project);
         return project;
     }
+
+    public void delete (Long id) {
+        database.remove(id);
+    }
+
 }
