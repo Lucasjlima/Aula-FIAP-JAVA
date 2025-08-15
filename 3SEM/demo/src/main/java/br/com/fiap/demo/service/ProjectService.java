@@ -12,7 +12,7 @@ import java.util.Optional;
 @ApplicationScope
 public class ProjectService {
 
-    private ProjetctRepository projectRepository;
+    private final ProjetctRepository projectRepository;
 
     public ProjectService(ProjetctRepository projectRepository) {
         this.projectRepository = projectRepository;
@@ -27,6 +27,7 @@ public class ProjectService {
     }
 
     public Project save (Project project){
+        System.out.println("Saving project:" + project);
         return projectRepository.save(project);
     }
 

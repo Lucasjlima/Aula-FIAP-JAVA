@@ -2,6 +2,7 @@ package br.com.fiap.demo.controller;
 
 import br.com.fiap.demo.models.Project;
 import br.com.fiap.demo.service.ProjectService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,13 +14,11 @@ import java.util.Optional;
 @SpringBootApplication
 public class ProjectController {
 
-    private final ProjectService projectService;
 
+    @Autowired
     private final ProjectService service;
-
-    public ProjectController(ProjectService service, ProjectService projectService) {
+    public ProjectController(ProjectService service) {
         this.service = service;
-        this.projectService = projectService;
     }
 
     @GetMapping("/projetos")
